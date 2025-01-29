@@ -1,9 +1,9 @@
 package in.bushansirgur.restapi.io;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,9 +13,18 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class ExpenseRequest {
+
+    @NotBlank(message = "Expense name is required")
+    @Size(min = 3, message = "Expense name should be at least 3 characters")
     private String name;
     private String note;
+
+    @NotBlank(message = "Expense category is required")
     private String category;
+
+    @NotNull(message = "Expense date is required")
     private Date date;
+
+    @NotNull(message = "Expense message is required")
     private BigDecimal amount;
 }

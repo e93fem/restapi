@@ -1,8 +1,10 @@
 package in.bushansirgur.restapi.controller;
 
 import in.bushansirgur.restapi.dto.ExpenseDTO;
+import in.bushansirgur.restapi.io.ExpenseRequest;
 import in.bushansirgur.restapi.io.ExpenseResponse;
 import in.bushansirgur.restapi.service.ExpenseService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -63,6 +65,20 @@ public class ExpenseController {
     public void deleteExpenseByExpenseId(@PathVariable String expenseId) {
         log.info("API DELETE /expenses/{} called", expenseId);
         expenseService.deleteExpenseByExpenseId(expenseId);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/expenses")
+    public ExpenseResponse saveExpenseDetails(@Valid @RequestBody ExpenseRequest expenseRequest) {
+        log.info("API POST /expenses called {}", expenseRequest);
+        ExpenseDTO expenseDTO = mapToExpenseDTO(expenseRequest);
+        expenseDTO = expenseService.saveExpenseDetails(expenseDTO);
+        log.info("Printing the expense dto {}", expenseDTO);
+        return mapToExpenseResponse(expenseDTO);
+    }
+
+    private ExpenseDTO mapToExpenseDTO(@Valid ExpenseRequest expenseRequest) {
+        return modelMapper.map(expenseRequest, ExpenseDTO.class);
     }
 
     /**
