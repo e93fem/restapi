@@ -77,6 +77,15 @@ public class ExpenseController {
         return mapToExpenseResponse(expenseDTO);
     }
 
+    @PutMapping("/expenses/{expenseId}")
+    public ExpenseResponse updateExpenseDetails(@RequestBody ExpenseRequest updateRequest, @PathVariable String expenseId) {
+        log.info("API PUT /expenses/{} request body {}", expenseId, updateRequest);
+        ExpenseDTO updatedExpendsDTO = mapToExpenseDTO(updateRequest);
+        updatedExpendsDTO = expenseService.updateExpenseDetails(updatedExpendsDTO, expenseId);
+        log.info("Printing the updated expense dto details {}", updatedExpendsDTO);
+        return mapToExpenseResponse(updatedExpendsDTO);
+    }
+
     private ExpenseDTO mapToExpenseDTO(@Valid ExpenseRequest expenseRequest) {
         return modelMapper.map(expenseRequest, ExpenseDTO.class);
     }
