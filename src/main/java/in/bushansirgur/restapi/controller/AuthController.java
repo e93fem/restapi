@@ -14,11 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -42,13 +42,23 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AuthResponse authenticateProfile(@RequestBody AuthRequest authRequest) {
+    public AuthResponse authenticateProfile(@RequestBody AuthRequest authRequest) throws Exception {
         log.info("API /login is called {}", authRequest);
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(),
-                authRequest.getPassword()));
+        authenticate(authRequest);
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
         final String token = jwtTokenUtil.generateToken((userDetails));
         return new AuthResponse(token, authRequest.getEmail());
+    }
+
+    private void authenticate(AuthRequest authRequest) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(),
+                    authRequest.getPassword()));
+        } catch (DisabledException ex) {
+            throw new Exception("Profile disabled");
+        } catch (BadCredentialsException ex) {
+            throw new Exception("Profile disabled");
+        }
     }
 
     private ProfileDTO mapToProfileDTO(ProfileRequest profileRequest) {
