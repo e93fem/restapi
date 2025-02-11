@@ -5,4 +5,6 @@ import in.bushansirgur.restapi.dto.ProfileDTO;
 public interface ProfileService {
 
     ProfileDTO createProfile(ProfileDTO profileDTO);
+
+    Boolean existsByEmail(String email);
 }
