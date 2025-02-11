@@ -6,6 +6,7 @@ import in.bushansirgur.restapi.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -17,9 +18,11 @@ public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository profileRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder encoder;
 
     @Override
     public ProfileDTO createProfile(ProfileDTO profileDTO) {
+        profileDTO.setPassword(encoder.encode(profileDTO.getPassword()));
         ProfileEntity profileEntity = mapToProfileEntity(profileDTO);
         profileEntity.setProfileId(UUID.randomUUID().toString());
         profileEntity = profileRepository.save(profileEntity);

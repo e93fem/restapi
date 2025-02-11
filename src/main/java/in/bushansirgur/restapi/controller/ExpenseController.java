@@ -22,7 +22,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin("*")
 public class ExpenseController {
 
     private final ExpenseService expenseService;
